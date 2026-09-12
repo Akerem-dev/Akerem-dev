@@ -22,7 +22,7 @@
 
 ### FlagTether
 
-**Feature flag management platform** for environment-scoped configuration, deterministic rollouts, targeting rules, audit history, and production-like deployment.
+**Feature flag management platform** for deterministic rollouts, targeting rules, environment-scoped configuration, and audit history.
 
 `Java 21` · `Spring Boot` · `PostgreSQL` · `React` · `TypeScript` · `Docker` · `Flyway` · `Testcontainers`
 
@@ -34,7 +34,7 @@ if (feature.isEnabled("new_checkout")) {
 }
 ```
 
-The interesting part is not the toggle itself. The system around it is where the engineering lives: deterministic evaluation, ordered targeting, transactional audit writes, database constraints, and a same-origin production-like topology.
+Built around deterministic evaluation, ordered targeting, transactional audit writes, database constraints, and same-origin deployment.
 
 ---
 
