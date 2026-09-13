@@ -45,9 +45,7 @@ if (feature.isEnabled("new_checkout")) {
 }
 ```
 
-The toggle is the easy part.
-
-The interesting work is everything around it: deterministic evaluation, ordered targeting, transaction-safe audit writes, database-enforced constraints, real PostgreSQL integration testing, and a production-like same-origin deployment.
+Built around deterministic evaluation, ordered targeting, transaction-safe audit writes, database-enforced constraints, real PostgreSQL integration tests, and same-origin deployment.
 
 <details>
 <summary><strong>inspect the evaluation path</strong></summary>
@@ -87,39 +85,15 @@ SHA-256 deterministic bucket
 
 ## 02 / ENGINEERING FOCUS
 
-<table>
-<tr>
-<td width="50%" valign="top">
+**Systems I like working on**  
+`backend systems` · `API design` · `data integrity` · `deployment tooling` · `developer experience`
 
-### Systems I like working on
-
-`01` backend systems  
-`02` API design  
-`03` data integrity  
-`04` deployment tooling  
-`05` developer experience
-
-</td>
-<td width="50%" valign="top">
-
-### Things I care about
-
-`01` predictable behavior  
-`02` explicit boundaries  
-`03` useful tests  
-`04` boring reliability  
-`05` understandable systems
-
-</td>
-</tr>
-</table>
+**Things I care about**  
+`predictable behavior` · `explicit boundaries` · `useful tests` · `boring reliability` · `understandable systems`
 
 I prefer software where correctness is visible in the structure.
 
-Fewer decorative abstractions.  
-Clearer ownership.  
-Failures that are understandable.  
-Infrastructure that still makes sense after the demo is over.
+Fewer decorative abstractions. Clearer ownership. Failures that are understandable. Infrastructure that still makes sense after the demo is over.
 
 ---
 
@@ -132,17 +106,13 @@ Small notes from decisions that mattered while building.
 
 <br />
 
-Percentage rollout is not random on every request.
-
-FlagTether derives a stable SHA-256 bucket from:
+Percentage rollout is not random on every request. FlagTether derives a stable SHA-256 bucket from:
 
 ```text
 environment:flagName:userKey
 ```
 
-The same exact input produces the same assignment across repeated evaluations.
-
-That makes rollout behavior predictable without storing an assignment for every user.
+The same exact input produces the same assignment across repeated evaluations without storing an assignment for every user.
 
 </details>
 
@@ -151,9 +121,7 @@ That makes rollout behavior predictable without storing an assignment for every 
 
 <br />
 
-Explicit targeting rules are evaluated before percentage rollout.
-
-This lets a specific rule override the general rollout percentage without making the rollout algorithm itself more complicated.
+Explicit targeting rules are evaluated before percentage rollout, so a specific rule can override the general rollout percentage without complicating the rollout algorithm.
 
 ```text
 targeting decision
@@ -170,71 +138,32 @@ percentage rollout
 
 <br />
 
-Configuration mutations and their matching audit records are persisted in the same transaction.
-
-If the audit write fails, the configuration change should not partially survive.
-
-```text
-configuration write
-        +
-audit write
-        │
-        ▼
-   one transaction
-```
+Configuration mutations and their matching audit records are persisted in the same transaction. If the audit write fails, the configuration change should not partially survive.
 
 </details>
 
 <details>
-<summary><strong>04 — database invariants are not optional</strong></summary>
+<summary><strong>more engineering notes</strong></summary>
 
 <br />
 
-Important domain rules are mirrored at the PostgreSQL boundary through Flyway-managed constraints.
+**Database invariants**  
+Important domain rules are mirrored at the PostgreSQL boundary through Flyway-managed constraints. Application validation improves the API experience; database constraints protect the data itself.
 
-Application validation improves the API experience.
+**Test against the database you actually use**  
+Integration tests run against real PostgreSQL through Testcontainers so migrations, SQL, constraints, and transaction semantics are exercised against the production database engine.
 
-Database constraints protect the data itself.
-
-I want both.
-
-</details>
-
-<details>
-<summary><strong>05 — test against the database you actually use</strong></summary>
-
-<br />
-
-Integration tests run against real PostgreSQL through Testcontainers rather than replacing production behavior with an in-memory database.
-
-That means migrations, SQL, constraints, and transaction semantics are exercised against the same database engine used by the application.
-
-</details>
-
-<details>
-<summary><strong>06 — same-origin deployment keeps the browser simple</strong></summary>
-
-<br />
-
-The production-like setup builds the React frontend into Nginx.
+**Keep the browser topology simple**  
+The production-like stack serves React through Nginx and proxies API traffic to Spring Boot, keeping the browser on one origin while internal service names remain internal.
 
 ```text
 browser
    │
    ▼
  nginx
- ├──────── static React
- │
- └──────── /api
-             │
-             ▼
-        Spring Boot
-             │
-             ▼
-        PostgreSQL
+ ├──── static React
+ └──── /api ──> Spring Boot ──> PostgreSQL
 ```
-
-The browser sees one origin while internal services remain internal.
 
 </details>
 
@@ -242,22 +171,14 @@ The browser sees one origin while internal services remain internal.
 
 ## 04 / RECENT OUTPUT
 
-```text
-2026-09   FlagTether v1.0.1
-2026-09   project-wide identifier cleanup
-2026-09   production-like Docker topology validation
-2026-09   PostgreSQL integration coverage
-2026-09   portfolio presentation pass
-```
+`2026-09` — FlagTether v1.0.1  
+`2026-09` — project-wide identifier cleanup  
+`2026-09` — production-like Docker topology validation  
+`2026-09` — PostgreSQL integration coverage  
+`2026-09` — portfolio presentation pass
 
-Current direction:
-
-```text
-depth        > repository count
-clarity      > cleverness
-correctness  > happy-path demos
-shipping     > endless abstraction
-```
+**Current direction**  
+`depth > repository count` · `clarity > cleverness` · `correctness > happy-path demos` · `shipping > endless abstraction`
 
 ---
 
